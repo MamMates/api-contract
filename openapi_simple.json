@@ -1,0 +1,1765 @@
+{
+    "openapi": "3.0.3",
+    "info": {
+        "title": "SIPOMAS RESTful API",
+        "description": "RESTful API to connect SIPOMAS front-end to back-end.",
+        "version": "1"
+    },
+    "servers": [
+        {
+            "url": "https://sipomas-api.tudemaha.my.id",
+            "description": "Production server"
+        }
+    ],
+    "paths": {
+        "/account.php?api=signup": {
+            "post": {
+                "tags": ["Account"],
+                "description": "Sign up API for users and admins",
+                "summary": "Sign up for new user",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/authorization"
+                    }
+                ],
+                "requestBody": {
+                    "description": "account details to add to the system",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "description": "new user's username",
+                                        "type": "string"
+                                    },
+                                    "email": {
+                                        "description": "new user's email",
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "description": "new user's password",
+                                        "type": "string"
+                                    }
+                                },
+                                "required": ["username", "email", "password"]
+                            },
+                            "example": {
+                                "username": "tudemaha",
+                                "email": "tudemaha@example.com",
+                                "password": "fjsalfj9382r7efasf39"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "description": "Sign up success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/defaultResponseSchema"
+                                },
+                                "example": {
+                                    "status": 1,
+                                    "message": "signup success, wait for super admin validation"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/403"
+                    },
+                    "405": {
+                        "$ref": "#/components/responses/405"
+                    },
+                    "409": {
+                        "description": "Username conflict",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/defaultResponseSchema"
+                                },
+                                "example": {
+                                    "status": 0,
+                                    "message": "email already used"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    }
+                }
+            }
+        },
+        
+        "/account.php?api=login": {
+            "post": {
+                "tags": ["Account"],
+                "description": "Sign in api for user, admin, and super admin",
+                "summary": "User's login",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/authorization"
+                    }
+                ],
+                "requestBody": {
+                    "description": "Account credentials for login",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string",
+                                        "description": "user's username"
+                                    },
+                                    "password": {
+                                        "type": "string",
+                                        "description": "user's password"
+                                    }
+                                },
+                                "required": ["username", "password"]
+                            },
+                            "example": {
+                                "username": "tudemaha",
+                                "password": "fjsalfj9382r7efasf39"
+                            }
+                        }
+                    },
+                    "required": true
+
+                },
+                "responses": {
+                    "200": {
+                        "description": "Login success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "integer",
+                                            "format": "int32"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "username": {
+                                                    "type": "string",
+                                                    "description": "logged in username"
+                                                },
+                                                "role": {
+                                                    "type": "string",
+                                                    "description": "logged in username's role"
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "examples": {
+                                    "success": {
+                                        "description": "login success",
+                                        "value": {
+                                            "status": 1,
+                                            "message": "login success",
+                                            "data": {
+                                                "username": "tudemaha",
+                                                "role": "superadin"
+                                            }
+                                        }
+                                    },
+                                    "incomplete": {
+                                        "description": "login success, but account's details not filled by user",
+                                        "value": {
+                                            "status": 2,
+                                            "message": "login success, but account's details need to be filled"
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/403"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/accountNotFound"
+                    },
+                    "405": {
+                        "$ref": "#/components/responses/405"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    }
+                }
+            }
+        },
+
+        "/account.php?api=getInfo": {
+            "get": {
+                "tags": ["Account"],
+                "description": "Get account information (just super admin can use)",
+                "summary": "Get account information",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/authorization"
+                    },
+                    {
+                        "name": "who",
+                        "in": "header",
+                        "required": true,
+                        "allowEmptyValue": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "superadmin",
+                        "description": "To ensure the super admin get the accounts data"
+                    },
+                    {
+                        "name": "role",
+                        "in": "query",
+                        "required": false,
+                        "allowEmptyValue": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "user",
+                        "description": "Filter by role of accounts (super, admin, user)"
+                    },
+                    {
+                        "name": "verified",
+                        "in": "query",
+                        "required": false,
+                        "allowEmptyValue": false,
+                        "schema": {
+                            "type": "boolean"
+                        },
+                        "example": true,
+                        "description": "Filter by account verification status (true: verified; false: not verified)"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success get account information",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "number",
+                                            "format": "int32"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "description": "Accounts informations",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "username": {
+                                                        "type": "string",
+                                                        "description": "Username of an account"
+                                                    },
+                                                    "role": {
+                                                        "type": "string",
+                                                        "description": "Role of an account"
+                                                    },
+                                                    "verified": {
+                                                        "type": "boolean",
+                                                        "description": "Verification status of an account [0: Not verified, 1: Verified]"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "example": {
+                                    "status": 1,
+                                    "message": "get data success",
+                                    "data": [
+                                        {
+                                            "username": "tudemaha",
+                                            "role": "user",
+                                            "verified": 1
+                                        },
+                                        {
+                                            "username": "gungkris",
+                                            "role": "admin",
+                                            "verified": 0
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/403"
+                    },
+                    "405": {
+                        "$ref": "#/components/responses/405"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    }
+                }
+            }
+        },
+
+        "/account.php?=api=update": {
+            "put": {
+                "tags": ["Account"],
+                "description": "Change account's information for user, admin, and super admin",
+                "summary": "Change account's information",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/authorization"
+                    }
+                ],
+                "requestBody": {
+                    "description": "new information about account",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "old_username": {
+                                        "type": "string",
+                                        "description": "user's old username"
+                                    },
+                                    "old_password": {
+                                        "type": "string",
+                                        "description": "user's old password"
+                                    },
+                                    "new_username": {
+                                        "type": "string",
+                                        "description": "user's new_username"
+                                    },
+                                    "new_password": {
+                                        "type": "string",
+                                        "description": "user's new username"
+                                    }
+                                },
+                                "required": ["old_username", "old_password"]
+                            },
+                            "examples": {
+                                "one_value": {
+                                    "description": "Just change one of two informations (username OR password)",
+                                    "value": {
+                                        "old_username": "tudemaha",
+                                        "old_password": "fjsalfj9382r7efasf39",
+                                        "new_username": "tudemaha2"
+                                    }
+                                },
+                                "all_value": {
+                                    "description": "Change all account's information",
+                                    "value": {
+                                        "old_username": "tudemaha",
+                                        "old_password": "fjsalfj9382r7efasf39",
+                                        "new_username": "tudemaha2",
+                                        "new_password": "s893fkjewfe8324euhfk2"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Update success",
+
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/defaultResponseSchema"
+                                },
+                                "example": {
+                                    "status": 1,
+                                    "message": "account update success"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/403"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/accountNotFound"
+                    },
+                    "405": {
+                        "$ref": "#/components/responses/405"
+                    },
+                    "409": {
+                        "description": "Username conflict",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/defaultResponseSchema"
+                                },
+                                "example": {
+                                    "status": 0,
+                                    "message": "email already used"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    }
+                }
+            }
+        },
+
+        "/account.php?api=delete": {
+            "delete": {
+                "tags": ["Account"],
+                "description": "Delete account for user, admin, and super admin",
+                "summary": "Delete account from system",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/authorization"
+                    }
+                ],
+                "requestBody": {
+                    "description": "Account's username to be deleted",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string",
+                                        "description": "Account's username"
+                                    }
+                                },
+                                "required": ["username"]
+                            },
+                            "example": {
+                                "username": "tudemaha"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Account deleted successfully",
+
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/defaultResponseSchema"
+                                },
+                                "example": {
+                                    "status": 1,
+                                    "message": "account deleted successfully"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/403"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/accountNotFound"
+                    },
+                    "405": {
+                        "$ref": "#/components/responses/405"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    }
+                }
+            }
+        },
+
+        "/user.php?api=details": {
+            "get": {
+                "tags": ["User"],
+                "description": "Get a detailed information of an account",
+                "summary": "Get detailed account's information",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/authorization"
+                    },
+                    {
+                        "name": "username",
+                        "in": "query",
+                        "description": "User's username to get the detailed account information",
+                        "required": true,
+                        "allowEmptyValue": false,
+                        "schema": {
+                            "type": "string"                            
+                        },
+                        "example": "tudemaha"
+                        
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Get data success",
+
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "number",
+                                            "format": "int32"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "name": {
+                                                    "type": "string"
+                                                },
+                                                "address": {
+                                                    "type": "string"
+                                                },
+                                                "organization": {
+                                                    "type": "string"
+                                                },
+                                                "phone": {
+                                                    "type": "string"
+                                                },
+                                                "email": {
+                                                    "type": "string"
+                                                },
+                                                "username": {
+                                                    "type": "string"
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "example": {
+                                    "status": 1,
+                                    "message": "get data success",
+                                    "data": {
+                                        "name": "Tude Maha",
+                                        "address": "New Sunset Street, Bali",
+                                        "organization": "Tech Solutions",
+                                        "phone": "+6285167354675",
+                                        "email": "tudemaha@example.com",
+                                        "username": "tudemaha"
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/403"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/accountNotFound"
+                    },
+                    "405": {
+                        "$ref": "#/components/responses/405"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    }
+                }
+            }
+        },
+
+        "/user.php?api=update": {
+            "put": {
+                "tags": ["User"],
+                "description": "Update biodata information of an account",
+                "summary": "Update user's biodata",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/authorization"
+                    }
+                ],
+                "requestBody": {
+                    "description": "New biodata infomation for updating old data",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string",
+                                        "description": "Account's username"
+                                    },
+                                    "new_name": {
+                                        "type": "string",
+                                        "description": "User's name"
+                                    },
+                                    "new_address": {
+                                        "type": "string",
+                                        "description": "User's address"
+                                    },
+                                    "new_organization": {
+                                        "type": "string",
+                                        "description": "User's organization"
+                                    },
+                                    "new_phone": {
+                                        "type": "string",
+                                        "description": "User's phone number"
+                                    },
+                                    "new_email": {
+                                        "type": "string",
+                                        "description": "User's email"
+                                    }
+                                },
+                                "required": ["username", "new_name", "new_username", "new_address", "new_organization", "new_phone", "new_email"]
+                            },
+                            "example": {
+                                "username": "tudemaha",
+                                "new_name": "Tude Mahardika",
+                                "new_address": "Sunset Bali Street",
+                                "new_organization": "D'Solutions",
+                                "new_phone": "+6285167353601",
+                                "new_email": "tudemaha2@example.com"
+
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "200": {
+                        "description": "Update success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "number",
+                                            "format": "int32"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        }
+                                    }
+                                },
+                                "example": {
+                                    "status": 1,
+                                    "message": "update success"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/403"
+                    },
+                    "404": {
+                        "$ref": "#/components/responses/accountNotFound"
+                    },
+                    "405": {
+                        "$ref": "#/components/responses/405"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    }
+                }
+            }
+        },
+
+        "/booking.php?api=create": {
+            "post": {
+                "tags": ["Booking"],
+                "description": "Create a new booking for a post",
+                "summary": "Create a new booking",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/authorization"
+                    }
+                ],
+                "requestBody": {
+                    "description": "Booking information of a post",
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string",
+                                        "description": "Username thas has booking"
+                                    },
+                                    "title": {
+                                        "type": "string",
+                                        "description": "Title of the post"
+                                    },
+                                    "posting_date": {
+                                        "type": "string",
+                                        "description": "Posting date [Format: YYYY-MM-DD]"
+                                    },
+                                    "posting_time": {
+                                        "type": "string",
+                                        "description": "Posting time [Format: HH:MM]"
+                                    },
+                                    "link": {
+                                        "type": "string",
+                                        "description": "Source content of a post [use '' if user not filled yet]"
+                                    },
+                                    "caption": {
+                                        "type": "string",
+                                        "description": "Caption for the post [use '' if user not filled yet]"
+                                    }
+                                },
+                                "required": ["username", "title", "posting_date", "posting_time", "link", "caption"]
+                            },
+                            "example": {
+                                "username": "tudemaha",
+                                "title": "A Simple Post",
+                                "posting_date": "2022-11-01",
+                                "posting_time": "15:00",
+                                "link": "https://simple-link.com",
+                                "caption": "This is a simple caption link. Goes on to make a good app!"
+                            }
+                        }
+                    },
+                    "required": true
+                },
+                "responses": {
+                    "201": {
+                        "description": "Booking created successfully",
+
+                        "content": {
+                            "application/json": {
+                                "schema":{
+                                    "$ref": "#/components/schemas/defaultResponseSchema"
+                                },
+                                "example": {
+                                    "status": 1,
+                                    "message": "booking created successfully"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "401": {
+                        "$ref": "#/components/responses/401"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/403"
+                    },
+                    "405": {
+                        "$ref": "#/components/responses/405"
+                    },
+                    "409": {
+                        "description": "Time conflict",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/defaultResponseSchema"
+                                },
+                                "example": {
+                                    "status": 0,
+                                    "message": "posting time from this new booking already used by other user who submitted first"
+                                }
+                            }
+                        }
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    }
+                }
+            }
+        },
+
+        "/booking.php?api=get": {
+            "get": {
+                "tags": ["Booking"],
+                "description": "Get all booking time from all users",
+                "summary": "Get booking information",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/authorization"
+                    },
+                    {
+                        "name": "month",
+                        "in": "header",
+                        "required": true,
+                        "allowEmptyValue": false,
+                        "schema": {
+                            "type": "integer",
+                            "format": "int32"
+                        },
+                        "description": "Month of the booking",
+                        "example": 12
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Get data success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "number",
+                                            "format": "int32"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "username": {
+                                                        "type": "string",
+                                                        "description": "Username of booking owner"
+                                                    },
+                                                    "booking_id": {
+                                                        "type": "integer",
+                                                        "description": "Booking ID of a post"
+                                                    },
+                                                    "posting_date": {
+                                                        "type": "string",
+                                                        "description": "Posting date of a post [Format: YYYY-MM-DD]"
+                                                    },
+                                                    "posting_time": {
+                                                        "type": "string",
+                                                        "description": "Posting time of a post [Format: HH:MM]"
+                                                    },
+                                                    "verified": {
+                                                        "type": "number",
+                                                        "description": "Verification status of a booking [0: Not verified; 1: Allow, but incomplete; 2: Allow and complete]"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "example": {
+                                    "status": 1,
+                                    "message": "Get data success",
+                                    "data": [
+                                        {
+                                            "username": "tudemaha",
+                                            "booking_id": 1,
+                                            "posting_date": "2022-11-10",
+                                            "posting_time": "15:00",
+                                            "verified": 1
+                                        },
+                                        {
+                                            "username": "tudemaha2",
+                                            "booking_id": 2,
+                                            "posting_date": "2022-11-02",
+                                            "posting_time": "10:00",
+                                            "verified": 2
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400get"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/403"
+                    },
+                    "405": {
+                        "$ref": "#/components/responses/405"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    }
+                }
+            }
+        },
+
+        "/booking.php?api=details": {
+            "get": {
+                "tags": ["Booking"],
+                "description": "Get details of individual booking",
+                "summary": "Get individual booking details",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/authorization"
+                    },
+                    {
+                        "name": "id",
+                        "in": "query",
+                        "description": "Booking ID of a booking to get the details",
+                        "required": true,
+                        "allowEmptyValue": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "org1"
+                    },
+                    {
+                        "name": "owner",
+                        "in": "header",
+                        "description": "Owner's username",
+                        "required": true,
+                        "allowEmptyValue": false,
+                        "schema": {
+                            "type": "string"
+                        },
+                        "example": "tudemaha"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Get data success",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "number",
+                                            "format": "int32"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "object",
+                                            "properties": {
+                                                "booking_id": {
+                                                    "type": "integer",
+                                                    "description": "Booking ID of the booking"
+                                                },
+                                                "title": {
+                                                    "type": "string",
+                                                    "description": "Title of the booking"
+                                                },
+                                                "posting_date": {
+                                                    "type": "string",
+                                                    "description": "Posting date of the booking [Format: YYYY-MM-DD]"
+                                                },
+                                                "posting_time": {
+                                                    "type": "string",
+                                                    "description": "Posting time of the booking [Format: HH:MM]"
+                                                },
+                                                "link": {
+                                                    "type": "string",
+                                                    "description": "Link of the content to post"
+                                                },
+                                                "caption": {
+                                                    "type": "string",
+                                                    "description": "Caption of the post"
+                                                },
+                                                "verified": {
+                                                    "type": "number",
+                                                    "format": "int32",
+                                                    "description": "Verification status of a booking [0: Not verified; 1: Allow, but incomplete; 2: Allow and complete]"
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "example": {
+                                    "status": 1,
+                                    "message": "get data success",
+                                    "data": {
+                                        "booking_id": 1,
+                                        "title": "A Simple Post",
+                                        "posting_date": "2022-11-01",
+                                        "posting_time": "15:00",
+                                        "link": "https://simple-link.com",
+                                        "caption": "This is a simple caption link. Goes on to make a good app!",
+                                        "verified": 1
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400get"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/403"
+                    },
+                    "404": {
+                        "description": "Booking not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/defaultResponseSchema"
+                                },
+                                "example": {
+                                    "status": 0,
+                                    "message": "booking not found"
+                                }
+                            }
+                        }
+                    },
+                    "405": {
+                        "$ref": "#/components/responses/405"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    }
+                }
+            }
+        },
+
+        "/booking.php?api=update": {
+            "patch": {
+                "tags": ["Booking"],
+                "description": "Update the updateable information of a booking",
+                "summary": "Update link and caption",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/authorization"
+                    }
+                ],
+                "requestBody": {
+                    "description": "New information for update a booking link and caption",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "booking_id": {
+                                        "type": "integer",
+                                        "description": "Booking ID of a booking to update"
+                                    },
+                                    "link": {
+                                        "type": "string",
+                                        "description": "New link to update booking"
+                                    },
+                                    "caption": {
+                                        "type": "string",
+                                        "description": "New caption to update booking"
+                                    }
+                                },
+                                "required": ["booking_id", "link", "caption"]
+                            },
+                            "example": {
+                                "booking_id": 1,
+                                "link": "https://new-update.com",
+                                "caption": "New caption for the post."
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                      "description": "Booking information updated successfully",
+
+                      "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/defaultResponseSchema"
+                            },
+                            "example": {
+                                "status": 1,
+                                "message": "booking updated successfully"
+                            }
+                        }
+                      }  
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/403"
+                    },
+                    "404": {
+                        "description": "Booking not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/defaultResponseSchema"
+                                },
+                                "example": {
+                                    "status": 0,
+                                    "message": "booking not found"
+                                }
+                            }
+                        }
+                    },
+                    "405": {
+                        "$ref": "#/components/responses/405"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    }
+                }
+            }
+        },
+
+        "/booking.php?api=delete": {
+            "delete": {
+                "tags": ["Booking"],
+                "description": "Delete a booking of an user",
+                "summary": "Delete a booking",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/authorization"
+                    }
+                ],
+                "requestBody": {
+                    "description": "Booking ID of a booking to be deleted",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "booking_id": {
+                                        "type": "integer",
+                                        "description": "Booking ID of a booking"
+                                    }
+                                },
+                                "required": ["booking_id"]
+                            },
+                            "example": {
+                                "booking_id": 1
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Booking deleted successfully",
+
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/defaultResponseSchema"
+                                },
+                                "example": {
+                                    "status": 1,
+                                    "message": "booking deleted successfully"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/403"
+                    },
+                    "404": {
+                        "description": "Booking not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/defaultResponseSchema"
+                                },
+                                "example": {
+                                    "status": 0,
+                                    "message": "booking not found"
+                                }
+                            }
+                        }
+                    },
+                    "405": {
+                        "$ref": "#/components/responses/405"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    }
+                }
+            }
+        },
+
+        "/super.php?api=verify": {
+            "patch": {
+                "tags": ["Super Admin"],
+                "description": "Verify sign up process of admins and users",
+                "summary": "Account verification",
+                "parameters": [{
+                    "$ref": "#/components/parameters/authorization"
+                }],
+                "requestBody": {
+                    "description": "Username and confirmation status verification",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "username": {
+                                        "type": "string",
+                                        "description": "Username of an account to verify"
+                                    },
+                                    "verify": {
+                                        "type": "boolean",
+                                        "description": "Verification status [0: deny, 1: allow]"
+                                    },
+                                    "role": {
+                                        "type": "string",
+                                        "description": "Role to assign for the unverified account"
+                                    }
+                                },
+                                "required": ["username", "status", "role"]
+                            },
+                            "example": {
+                                "username": "tudemaha",
+                                "verify": 1,
+                                "role": "user"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Verification success",
+
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/defaultResponseSchema"
+                                },
+                                "example": {
+                                    "status": 1,
+                                    "message": "verification success"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/403"
+                    },
+                    "405": {
+                        "$ref": "#/components/responses/405"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    }
+                }
+            }
+        },
+
+        "/admin.php?api=verify": {
+            "patch": {
+                "tags": ["Admin"],
+                "description": "Verify the status of a booking",
+                "summary": "Verify booking status",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/authorization"
+                    }
+                ],
+                "requestBody": {
+                    "description": "Booking ID and it's status",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "booking_id": {
+                                        "type": "integer",
+                                        "description": "Booking ID of a booking to verify"
+                                    },
+                                    "verify": {
+                                        "type": "number",
+                                        "format": "int32",
+                                        "description": "Verify status of a booking [0: Deny; 1: Allow, but incomplete; 2: Allow and complete]"
+                                    }
+                                },
+                                "required": ["booking_id", "verify"]
+                            },
+                            "example": {
+                                "booking_id": 1,
+                                "verify": 2
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Give verification success",
+
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/defaultResponseSchema"
+                                },
+                                "example": {
+                                    "status": 1,
+                                    "message": "verification success"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/403"
+                    },
+                    "404": {
+                        "description": "Booking not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/defaultResponseSchema"
+                                },
+                                "example": {
+                                    "status": 0,
+                                    "message": "booking not found"
+                                }
+                            }
+                        }
+                    },
+                    "405": {
+                        "$ref": "#/components/responses/405"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    }
+                }
+            }
+        },
+
+        "/admin.php?api=assign": {
+            "post": {
+                "tags": ["Admin"],
+                "description": "Assign a task to an admin to process a booking",
+                "summary": "Assign a task to process booking",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/authorization"
+                    }
+                ],
+                "requestBody": {
+                    "description": "The admin that give and receive task",
+                    "required": true,
+                    "content": {
+                        "application/josn": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "booking_id": {
+                                        "type": "integer",
+                                        "description": "Booking ID of a booking"
+                                    },
+                                    "from": {
+                                        "type": "string",
+                                        "description": "Admin's username that give a task"
+                                    },
+                                    "to": {
+                                        "type": "string",
+                                        "description": "Admin's username that receive a task"
+                                    }
+                                },
+                                "required": ["booking_id", "from", "to"]
+                            },
+                            "example": {
+                                "booking_id": 1,
+                                "from": "agungkris",
+                                "to": "nandaputra"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "task given successfully",
+
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/defaultResponseSchema"
+                                },
+                                "example": {
+                                    "status": 1,
+                                    "message": "task given successfully"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/403"
+                    },
+                    "404": {
+                        "description": "Booking ID or admin's username not found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/defaultResponseSchema"
+                                },
+                                "example": {
+                                    "status": 0,
+                                    "message": "booking not found"
+                                }
+                            }
+                        }
+                    },
+                    "405": {
+                        "$ref": "#/components/responses/405"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    }
+                }
+            }
+        },
+
+        "/admin.php?api=getTask": {
+            "get": {
+                "tags": ["Admin"],
+                "description": "Get tasks assigned to an admin",
+                "summary": "Get admin's tasks",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/authorization"
+                    },
+                    {
+                        "name": "username",
+                        "in": "query",
+                        "required": false,
+                        "allowEmptyValue": false,
+                        "description": "Username of an admin to get the tasks",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Get data success",
+
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "status": {
+                                            "type": "number",
+                                            "format": "int32"
+                                        },
+                                        "message": {
+                                            "type": "string"
+                                        },
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "task_id": {
+                                                        "type": "integer",
+                                                        "description": "Task ID of an admin's task"
+                                                    },
+                                                    "booking_id": {
+                                                        "type": "integer",
+                                                        "description": "Booking ID of a booking"
+                                                    },
+                                                    "assigned_by": {
+                                                        "type": "string",
+                                                        "description": "Admin's username that assigned task to"
+                                                    },
+                                                    "assigned_to": {
+                                                        "type": "string",
+                                                        "description": "Admin's usrename that assigned task"
+                                                    },
+                                                    "finished": {
+                                                        "type": "boolean",
+                                                        "description": "Finished status"
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                },
+                                "example": {
+                                    "stauts": 1,
+                                    "message": "get data success",
+                                    "data": [
+                                        {
+                                            "task_id": 1,
+                                            "booking_id": 1,
+                                            "assigned_by": "gungkris",
+                                            "assigned_to": "tudemaha",
+                                            "finished": 0
+                                        },
+                                        {
+                                            "task_id": 2,
+                                            "booking_id": 3,
+                                            "assigned_by": "tudemaha",
+                                            "assigned_to": "gungkris",
+                                            "finished": 1
+                                        }
+                                    ]
+                                }
+                            }
+                        }
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/403"
+                    },
+                    "405": {
+                        "$ref": "#/components/responses/405"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    }
+                }
+            }
+        },
+
+        "/admin.php?api=finish": {
+            "patch": {
+                "tags": ["Admin"],
+                "description": "Update finishing status of a task",
+                "summary": "Finish task for admin",
+                "parameters": [
+                    {
+                        "$ref": "#/components/parameters/authorization"
+                    }
+                ],
+                "requestBody": {
+                    "description": "Task ID and finishing status",
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "type": "object",
+                                "properties": {
+                                    "task_id": {
+                                        "type": "integer",
+                                        "description": "Task ID to update it's status "
+                                    },
+                                    "finish": {
+                                        "type": "boolean",
+                                        "description": "Finishing status [0: Unfinished, 1: Finished]"
+                                    }
+                                },
+                                "required": ["task_id", "finish"]
+                            },
+                            "example":{
+                                "task_id": 1,
+                                "finish": 1
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Finishing status updated successfully",
+
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/defaultResponseSchema"
+                                },
+                                "example": {
+                                    "status": 1,
+                                    "message": "finishing status updated successfully"
+                                }
+                            }
+                        }
+                    },
+                    "400": {
+                        "$ref": "#/components/responses/400"
+                    },
+                    "403": {
+                        "$ref": "#/components/responses/403"
+                    },
+                    "404": {
+                        "description": "Admin task not found or no changes occured",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/defaultResponseSchema"
+                                },
+                                "example": {
+                                    "status": 0,
+                                    "message": "admin task not found or no changes occured"
+                                }
+                            }
+                        }
+                    },
+                    "405": {
+                        "$ref": "#/components/responses/405"
+                    },
+                    "500": {
+                        "$ref": "#/components/responses/500"
+                    }
+                }
+            }
+        }
+    },
+
+    "components": {
+        "schemas": {
+            "defaultResponseSchema": {
+                "type": "object",
+                "properties": {
+                    "status": {
+                        "type": "number",
+                        "format": "int32"
+                    },
+                    "message": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "responses": {
+            "400": {
+                "description": "Request body not match",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/defaultResponseSchema"
+                        },
+                        "example": {
+                            "status": 0,
+                            "message": "request body not match"
+                        }
+                    }
+                }
+            },
+            "400get": {
+                "description": "Wrong query parameter",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/defaultResponseSchema"
+                        },
+                        "example": {
+                            "status": 0,
+                            "message": "wrong query parameter"
+                        }
+                    }
+                }
+            },
+            "401": {
+                "description": "Unauthorized access",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/defaultResponseSchema"
+                        },
+                        "example": {
+                            "status": 0,
+                            "message": "account not verified by super admin"
+                        }
+                    }
+                }
+            },
+            "403": {
+                "description": "Forbidden access",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/defaultResponseSchema"
+                        },
+                        "example": {
+                            "status": 0,
+                            "message": "forbidden access"
+                        }
+                    }
+                }
+            },
+            "405": {
+                "description": "Method not allowed",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/defaultResponseSchema"
+                        },
+                        "example": {
+                            "status": 0,
+                            "message": "method not allowed"
+                        }
+                    }
+                }
+            },
+            "500": {
+                "description": "Internal error",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/defaultResponseSchema"
+                        },
+                        "example": {
+                            "status": 0,
+                            "message": "request failed, server error"
+                        }
+                    }
+                }
+            },
+            "accountNotFound": {
+                "description": "Account not found",
+                "content": {
+                    "application/json": {
+                        "schema": {
+                            "$ref": "#/components/schemas/defaultResponseSchema"
+                        },
+                        "example": {
+                            "status": 0,
+                            "message": "account not found"
+                        }
+                    }
+                }
+            }
+        },
+        "parameters": {
+            "authorization": {
+                "name": "dntl",
+                "in": "header",
+                "allowEmptyValue": false,
+                "required": true,
+                "description": "The API key",
+                "schema": {
+                    "type": "string"
+                },
+                "example": "iohfwe98uejisdf834ryewhnfc32832yr"
+            }
+        }
+    }
+}
