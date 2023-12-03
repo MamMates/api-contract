@@ -1,0 +1,10 @@
+openapi: 3.1.0
+info:
+  title: MamMates API Contract
+  version: 0.0.1
+  summary: API contract for MamMates backend development
+servers:
+  - url: mammates.com
+    description: Development server
+paths:
+components:
