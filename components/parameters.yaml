@@ -22,10 +22,10 @@ components:
       example: 1
       default: 1
 
-    OrderId:
-      name: order_id
+    Id:
+      name: id
       in: path
-      description: order id to get details
+      description: id to get details
       required: true
       allowEmptyValue: false
       schema:

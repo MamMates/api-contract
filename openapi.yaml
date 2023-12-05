@@ -44,7 +44,7 @@ paths:
           $ref: "./components/responses.yaml#/components/responses/404"
         500:
           $ref: "./components/responses.yaml#/components/responses/500"
-          
+
   /auth/seller/register:
     post:
       tags:
@@ -56,11 +56,11 @@ paths:
             schema:
               type: object
               properties:
-                store_name:
+                store:
                   $ref: "./components/schemas.yaml#/components/schemas/StoreName"
-                store_address:
+                address:
                   $ref: "./components/schemas.yaml#/components/schemas/Address"
-                seller_name:
+                seller:
                   $ref: "./components/schemas.yaml#/components/schemas/FullName"
                 email:
                   $ref: "./components/schemas.yaml#/components/schemas/Email"
@@ -69,9 +69,9 @@ paths:
                 password_repeat:
                   $ref: "./components/schemas.yaml#/components/schemas/Password"
               required:
-                - "store_name"
-                - "store_address"
-                - "seller_name"
+                - "store"
+                - "address"
+                - "seller"
                 - "email"
                 - "password"
                 - "password_repeat"
@@ -174,13 +174,13 @@ paths:
         500:
           $ref: "./components/responses.yaml#/components/responses/500"
 
-  /orders/{order_id}:
+  /orders/{id}:
     get:
       tags:
         - "Order"
-      description: Get order detail by order_id
+      description: Get order detail by id
       parameters:
-        - $ref: "./components/parameters.yaml#/components/parameters/OrderId"
+        - $ref: "./components/parameters.yaml#/components/parameters/Id"
       responses:
         200:
           description: Success get orders
@@ -222,9 +222,9 @@ paths:
     put:
       tags:
         - "Order"
-      description: change order status by order_id
+      description: change order status by id
       parameters:
-        - $ref: "./components/parameters.yaml#/components/parameters/OrderId"
+        - $ref: "./components/parameters.yaml#/components/parameters/Id"
       requestBody:
         content:
           application/json:
@@ -263,3 +263,232 @@ paths:
         500:
           $ref: "./components/responses.yaml#/components/responses/500"
 
+  /foods:
+    get:
+      tags:
+        - "Food"
+      description: get all food by sellers
+      responses:
+        200:
+          description: Success get foods data
+          content:
+            application/json:
+              schema:
+                $ref: "./components/schemas.yaml#/components/schemas/Response"
+              example:
+                status: true
+                code: 200
+                message: success get foods
+                data:
+                  foods:
+                    - id: 1
+                      is_valid: true
+                      name: Donut Kentang Coklat
+                      stock: 4
+                      price: 5000
+                      mam_rates: 3
+                      image: https://mammates/images/ihfsdfkdsf
+                    - id: 2
+                      is_valid: false
+                      name: Donut Ubi Mawar
+                      stock: 2
+                      price: 10000
+                      image: https://mammates/images/ihfsdfkdsf
+        401:
+          $ref: "./components/responses.yaml#/components/responses/401"
+        403:
+          $ref: "./components/responses.yaml#/components/responses/403"
+        404:
+          $ref: "./components/responses.yaml#/components/responses/404"
+        500:
+          $ref: "./components/responses.yaml#/components/responses/500"
+
+    
+    post:
+      tags:
+        - "Food"
+      description: add new food
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "./components/schemas.yaml#/components/schemas/Food"
+        required: true
+      responses:
+        200:
+          description: Success add new food
+          content:
+            application/json:
+              schema:
+                $ref: "./components/schemas.yaml#/components/schemas/Response"
+              example:
+                status: true
+                code: 200
+                message: new food addedd successfully
+                data: null
+        400:
+          $ref: "./components/responses.yaml#/components/responses/400"
+        401:
+          $ref: "./components/responses.yaml#/components/responses/401"
+        403:
+          $ref: "./components/responses.yaml#/components/responses/403"
+        404:
+          $ref: "./components/responses.yaml#/components/responses/404"
+        500:
+          $ref: "./components/responses.yaml#/components/responses/500"
+
+  /foods/{id}:
+    get:
+      tags:
+        - "Food"
+      description: get food details by id
+      parameters:
+        - $ref: "./components/parameters.yaml#/components/parameters/Id"
+      responses:
+        200:
+          description: Success get food detail
+          content:
+            application/json:
+              schema:
+                $ref: "./components/schemas.yaml#/components/schemas/Response"
+              example:
+                status: true
+                code: 200
+                message: login success
+                data: 
+                  food:
+                    name: Donat Ubi Mawar
+                    price: 5000
+                    mam_rates: 3
+                    image: https://mammates/images/ihfsdfkdsf
+                    mam_image: https://mammates/images/ihfsdfkdsf
+        400:
+          $ref: "./components/responses.yaml#/components/responses/400"
+        401:
+          $ref: "./components/responses.yaml#/components/responses/401"
+        403:
+          $ref: "./components/responses.yaml#/components/responses/403"
+        404:
+          $ref: "./components/responses.yaml#/components/responses/404"
+        500:
+          $ref: "./components/responses.yaml#/components/responses/500"
+
+    put:
+      tags:
+        - "Food"
+      description: update food detail
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: "./components/schemas.yaml#/components/schemas/Food"
+        required: true
+      responses:
+        200:
+          description: Success update food detail
+          content:
+            application/json:
+              schema:
+                $ref: "./components/schemas.yaml#/components/schemas/Response"
+              example:
+                status: true
+                code: 200
+                message: food detail updated successfully
+                data: null
+        400:
+          $ref: "./components/responses.yaml#/components/responses/400"
+        401:
+          $ref: "./components/responses.yaml#/components/responses/401"
+        403:
+          $ref: "./components/responses.yaml#/components/responses/403"
+        404:
+          $ref: "./components/responses.yaml#/components/responses/404"
+        500:
+          $ref: "./components/responses.yaml#/components/responses/500"
+    
+    delete:
+      tags:
+        - "Food"
+      description: delete food by id
+      responses:
+        200:
+          description: Success delete
+          content:
+            application/json:
+              schema:
+                $ref: "./components/schemas.yaml#/components/schemas/Response"
+              example:
+                status: true
+                code: 200
+                message: food deleted successfully
+                data: null
+        400:
+          $ref: "./components/responses.yaml#/components/responses/400"
+        401:
+          $ref: "./components/responses.yaml#/components/responses/401"
+        403:
+          $ref: "./components/responses.yaml#/components/responses/403"
+        404:
+          $ref: "./components/responses.yaml#/components/responses/404"
+        500:
+          $ref: "./components/responses.yaml#/components/responses/500"
+
+  /accounts/store:
+    get:
+      tags:
+        - "Account"
+      description: get store information
+      responses:
+        200:
+          description: Success get store information
+          content:
+            application/json:
+              schema:
+                $ref: "./components/schemas.yaml#/components/schemas/Response"
+              example:
+                status: true
+                code: 200
+                message: success get store information
+                data:
+                  store:
+                    name: Toko Pak Tude
+                    address: Jalan Kampus Merdeka No. 69
+                    image: https://mammates/images/ihfsdfkdsf
+        401:
+          $ref: "./components/responses.yaml#/components/responses/401"
+        403:
+          $ref: "./components/responses.yaml#/components/responses/403"
+        404:
+          $ref: "./components/responses.yaml#/components/responses/404"
+        500:
+          $ref: "./components/responses.yaml#/components/responses/500"
+
+  /accounts/seller:
+    get:
+      tags:
+        - "Account"
+      description: get seller account information
+      responses:
+        200:
+          description: Login success
+          content:
+            application/json:
+              schema:
+                $ref: "./components/schemas.yaml#/components/schemas/Response"
+              example:
+                status: true
+                code: 200
+                message: login success
+                data:
+                  store:
+                    name: Toko Pak Tude
+                    address: Jalan Kampus Merdeka No. 69
+                    image: https://mammates/images/ihfsdfkdsf
+        401:
+          $ref: "./components/responses.yaml#/components/responses/401"
+        403:
+          $ref: "./components/responses.yaml#/components/responses/403"
+        404:
+          $ref: "./components/responses.yaml#/components/responses/404"
+        500:
+          $ref: "./components/responses.yaml#/components/responses/500"
