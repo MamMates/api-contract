@@ -412,7 +412,7 @@ paths:
       description: delete food by id
       responses:
         200:
-          description: Success delete
+          description: Success delete food
           content:
             application/json:
               schema:
@@ -437,10 +437,10 @@ paths:
     get:
       tags:
         - "Account"
-      description: get store information
+      description: get store detail
       responses:
         200:
-          description: Success get store information
+          description: Success get store detail
           content:
             application/json:
               schema:
@@ -448,7 +448,7 @@ paths:
               example:
                 status: true
                 code: 200
-                message: success get store information
+                message: success get store detail
                 data:
                   store:
                     name: Toko Pak Tude
@@ -467,7 +467,7 @@ paths:
     get:
       tags:
         - "Account"
-      description: get seller account information
+      description: get seller account detail
       responses:
         200:
           description: Login success
@@ -480,10 +480,100 @@ paths:
                 code: 200
                 message: login success
                 data:
-                  store:
-                    name: Toko Pak Tude
+                  account:
+                    store: Toko Pak Tude
                     address: Jalan Kampus Merdeka No. 69
+                    seller: Tude Maha
+                    emai: user@mammates.com
                     image: https://mammates/images/ihfsdfkdsf
+        401:
+          $ref: "./components/responses.yaml#/components/responses/401"
+        403:
+          $ref: "./components/responses.yaml#/components/responses/403"
+        404:
+          $ref: "./components/responses.yaml#/components/responses/404"
+        500:
+          $ref: "./components/responses.yaml#/components/responses/500"
+
+    put:
+      tags:
+        - "Account"
+      description: update seller detail
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                store:
+                  $ref: "./components/schemas.yaml#/components/schemas/StoreName"
+                address:
+                  $ref: "./components/schemas.yaml#/components/schemas/Address"
+                seller:
+                  $ref: "./components/schemas.yaml#/components/schemas/FullName"
+                email:
+                  $ref: "./components/schemas.yaml#/components/schemas/Email"
+              required:
+                - "store"
+                - "address"
+                - "seller"
+                - "email"
+        required: true
+      responses:
+        200:
+          description: Success update seller detail
+          content:
+            application/json:
+              schema:
+                $ref: "./components/schemas.yaml#/components/schemas/Response"
+              example:
+                status: true
+                code: 200
+                message: seller detail updated successfully
+                data: null
+        400:
+          $ref: "./components/responses.yaml#/components/responses/400"
+        401:
+          $ref: "./components/responses.yaml#/components/responses/401"
+        403:
+          $ref: "./components/responses.yaml#/components/responses/403"
+        404:
+          $ref: "./components/responses.yaml#/components/responses/404"
+        500:
+          $ref: "./components/responses.yaml#/components/responses/500"
+
+    patch:
+      tags:
+        - "Account"
+      description: update store profile picture
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                image:
+                  description: store new profile picture
+                  type: string
+                  format: binary
+                  nullable: false
+              required:
+                - "image"
+        required: true
+      responses:
+        200:
+          description: Success update store profile picture
+          content:
+            application/json:
+              schema:
+                $ref: "./components/schemas.yaml#/components/schemas/Response"
+              example:
+                status: true
+                code: 200
+                message: store profile picture updated successfully
+                data: null
+        400:
+          $ref: "./components/responses.yaml#/components/responses/400"
         401:
           $ref: "./components/responses.yaml#/components/responses/401"
         403:
