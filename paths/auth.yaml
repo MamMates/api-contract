@@ -1,0 +1,87 @@
+Login:
+  post:
+    tags:
+      - "Seller Auth"
+    description: login service for seller
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              email:
+                $ref: "../components/schemas.yaml#/components/schemas/Email"
+              password:
+                $ref: "../components/schemas.yaml#/components/schemas/Password"
+            required:
+              - email
+              - password
+      required: true
+    responses:
+      200:
+        description: Login success
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas.yaml#/components/schemas/Response"
+            example:
+              status: true
+              code: 200
+              message: login success
+              data: null
+      400:
+        $ref: "../components/responses.yaml#/components/responses/400"
+      404:
+        $ref: "../components/responses.yaml#/components/responses/404"
+      500:
+        $ref: "../components/responses.yaml#/components/responses/500"
+
+SellerRegister:
+  post:
+    tags:
+      - "Seller Auth"
+    description: register service for seller
+    requestBody:
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              store:
+                $ref: "../components/schemas.yaml#/components/schemas/StoreName"
+              address:
+                $ref: "../components/schemas.yaml#/components/schemas/Address"
+              seller:
+                $ref: "../components/schemas.yaml#/components/schemas/FullName"
+              email:
+                $ref: "../components/schemas.yaml#/components/schemas/Email"
+              password:
+                $ref: "../components/schemas.yaml#/components/schemas/Password"
+              password_repeat:
+                $ref: "../components/schemas.yaml#/components/schemas/Password"
+            required:
+              - "store"
+              - "address"
+              - "seller"
+              - "email"
+              - "password"
+              - "password_repeat"
+      required: true
+    responses:
+      201:
+        description: Register success
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas.yaml#/components/schemas/Response"
+            example:
+              status: true
+              code: 201
+              message: register success
+              data: null
+      400:
+        $ref: "../components/responses.yaml#/components/responses/400"
+      404:
+        $ref: "../components/responses.yaml#/components/responses/404"
+      500:
+        $ref: "../components/responses.yaml#/components/responses/500"

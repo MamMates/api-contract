@@ -1,0 +1,168 @@
+Foods:
+  get:
+    tags:
+      - "Food"
+    description: get all food by sellers
+    responses:
+      200:
+        description: Success get foods data
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas.yaml#/components/schemas/Response"
+            example:
+              status: true
+              code: 200
+              message: success get foods
+              data:
+                foods:
+                  - id: 1
+                    is_valid: true
+                    name: Donut Kentang Coklat
+                    stock: 4
+                    price: 5000
+                    mam_rates: 3
+                    image: https://mammates/images/ihfsdfkdsf
+                  - id: 2
+                    is_valid: false
+                    name: Donut Ubi Mawar
+                    stock: 2
+                    price: 10000
+                    image: https://mammates/images/ihfsdfkdsf
+      401:
+        $ref: "../components/responses.yaml#/components/responses/401"
+      403:
+        $ref: "../components/responses.yaml#/components/responses/403"
+      404:
+        $ref: "../components/responses.yaml#/components/responses/404"
+      500:
+        $ref: "../components/responses.yaml#/components/responses/500"
+
+  post:
+    tags:
+      - "Food"
+    description: add new food
+    requestBody:
+      content:
+        multipart/form-data:
+          schema:
+            $ref: "../components/schemas.yaml#/components/schemas/Food"
+      required: true
+    responses:
+      200:
+        description: Success add new food
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas.yaml#/components/schemas/Response"
+            example:
+              status: true
+              code: 200
+              message: new food addedd successfully
+              data: null
+      400:
+        $ref: "../components/responses.yaml#/components/responses/400"
+      401:
+        $ref: "../components/responses.yaml#/components/responses/401"
+      403:
+        $ref: "../components/responses.yaml#/components/responses/403"
+      404:
+        $ref: "../components/responses.yaml#/components/responses/404"
+      500:
+        $ref: "../components/responses.yaml#/components/responses/500"
+
+SingleFood:
+  get:
+    tags:
+      - "Food"
+    description: get food details by id
+    parameters:
+      - $ref: "../components/parameters.yaml#/components/parameters/Id"
+    responses:
+      200:
+        description: Success get food detail
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas.yaml#/components/schemas/Response"
+            example:
+              status: true
+              code: 200
+              message: login success
+              data: 
+                food:
+                  name: Donat Ubi Mawar
+                  price: 5000
+                  mam_rates: 3
+                  image: https://mammates/images/ihfsdfkdsf
+                  mam_image: https://mammates/images/ihfsdfkdsf
+      400:
+        $ref: "../components/responses.yaml#/components/responses/400"
+      401:
+        $ref: "../components/responses.yaml#/components/responses/401"
+      403:
+        $ref: "../components/responses.yaml#/components/responses/403"
+      404:
+        $ref: "../components/responses.yaml#/components/responses/404"
+      500:
+        $ref: "../components/responses.yaml#/components/responses/500"
+
+  put:
+    tags:
+      - "Food"
+    description: update food detail
+    requestBody:
+      content:
+        multipart/form-data:
+          schema:
+            $ref: "../components/schemas.yaml#/components/schemas/Food"
+      required: true
+    responses:
+      200:
+        description: Success update food detail
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas.yaml#/components/schemas/Response"
+            example:
+              status: true
+              code: 200
+              message: food detail updated successfully
+              data: null
+      400:
+        $ref: "../components/responses.yaml#/components/responses/400"
+      401:
+        $ref: "../components/responses.yaml#/components/responses/401"
+      403:
+        $ref: "../components/responses.yaml#/components/responses/403"
+      404:
+        $ref: "../components/responses.yaml#/components/responses/404"
+      500:
+        $ref: "../components/responses.yaml#/components/responses/500"
+  
+  delete:
+    tags:
+      - "Food"
+    description: delete food by id
+    responses:
+      200:
+        description: Success delete food
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas.yaml#/components/schemas/Response"
+            example:
+              status: true
+              code: 200
+              message: food deleted successfully
+              data: null
+      400:
+        $ref: "../components/responses.yaml#/components/responses/400"
+      401:
+        $ref: "../components/responses.yaml#/components/responses/401"
+      403:
+        $ref: "../components/responses.yaml#/components/responses/403"
+      404:
+        $ref: "../components/responses.yaml#/components/responses/404"
+      500:
+        $ref: "../components/responses.yaml#/components/responses/500"
