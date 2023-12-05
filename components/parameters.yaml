@@ -1,0 +1,34 @@
+components:
+  parameters:
+    PerPage:
+      name: pp
+      in: query
+      description: items per page to show
+      required: false
+      allowEmptyValue: false
+      schema:
+        type: integer
+      example: 3
+      default: 3
+    
+    OrderStatus:
+      name: status
+      in: query
+      description: order status to get data
+      required: true
+      allowEmptyValue: false
+      schema:
+        type: integer
+      example: 1
+      default: 1
+
+    OrderId:
+      name: order_id
+      in: path
+      description: order id to get details
+      required: true
+      allowEmptyValue: false
+      schema:
+        type: integer
+      example: 1
+      default: 1

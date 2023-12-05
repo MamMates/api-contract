@@ -1,0 +1,49 @@
+components:
+  schemas:
+    Email:
+      description: user's email
+      type: string
+      nullable: false
+      example: user@mammates.com
+
+    Password:
+      description: user's password
+      type: string
+      nullable: false
+      minLength: 8
+      example: password
+
+    FullName:
+      description: user's profile name
+      type: string
+      minLength: 1
+      example: Tude Maha
+      allowEmptyValue: false
+    
+    StoreName:
+      description: seller's profile name
+      type: string
+      minLength: 1
+      example: Toko Pak Tude
+      allowEmptyValue: false
+    
+    Address:
+      description: seller's address
+      type: string
+      minLength: 1
+      example: Jalan Kampus Merdeka No. 69
+      allowEmptyValue: false
+
+    Response:
+      description: default response schema
+      type: object
+      properties:
+        status:
+          type: boolean
+        code:
+          type: integer
+        message:
+          type: string
+        data:
+          type: object
+          default: null

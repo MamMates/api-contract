@@ -1,0 +1,68 @@
+components:
+  responses:
+    400:
+      description: Bad request, wrong format, etc.
+      content:
+        application/json:
+          schema:
+            $ref: "./schemas.yaml#/components/schemas/Response"
+          example:
+            status: false
+            code: 400
+            message: bad request on parameters or request body
+            data: null
+    401:
+      description: Incorrect credentials or no account on record
+      content:
+        application/json:
+          schema:
+            $ref: "./schemas.yaml#/components/schemas/Response"
+          example:
+            status: false
+            code: 401
+            message: unauthorized access
+            data: null
+    403:
+      description: Forbidden access
+      content:
+        application/json:
+          schema:
+            $ref: "./schemas.yaml#/components/schemas/Response"
+          example:
+            status: false
+            code: 403
+            message: forbidden access
+            data: null
+    404:
+      description: Record not found
+      content:
+        application/json:
+          schema:
+            $ref: "./schemas.yaml#/components/schemas/Response"
+          example:
+            status: false
+            code: 404
+            message: record not found
+            data: null
+    409:
+      description: Conflict input
+      content:
+        application/json:
+          schema:
+            $ref: "./schemas.yaml#/components/schemas/Response"
+          example:
+            status: false
+            code: 409
+            message: new data already exists
+            data: null
+    500:
+      description: Internal server error
+      content:
+        application/json:
+          schema:
+            $ref: "./schemas.yaml#/components/schemas/Response"
+          example:
+            status: false
+            code: 500
+            message: request failed, server error
+            data: null

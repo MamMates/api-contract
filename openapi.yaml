@@ -1,10 +1,265 @@
-openapi: 3.1.0
+openapi: 3.0.3
 info:
   title: MamMates API Contract
   version: 0.0.1
-  summary: API contract for MamMates backend development
+  description: API contract for MamMates backend development
 servers:
   - url: mammates.com
     description: Development server
 paths:
-components:
+  /auth/seller/login:
+    post:
+      tags:
+        - "Seller Auth"
+      description: login service for seller
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  $ref: "./components/schemas.yaml#/components/schemas/Email"
+                password:
+                  $ref: "./components/schemas.yaml#/components/schemas/Password"
+              required:
+                - email
+                - password
+        required: true
+      responses:
+        200:
+          description: Login success
+          content:
+            application/json:
+              schema:
+                $ref: "./components/schemas.yaml#/components/schemas/Response"
+              example:
+                status: true
+                code: 200
+                message: login success
+                data: null
+        400:
+          $ref: "./components/responses.yaml#/components/responses/400"
+        404:
+          $ref: "./components/responses.yaml#/components/responses/404"
+        500:
+          $ref: "./components/responses.yaml#/components/responses/500"
+          
+  /auth/seller/register:
+    post:
+      tags:
+        - "Seller Auth"
+      description: register service for seller
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                store_name:
+                  $ref: "./components/schemas.yaml#/components/schemas/StoreName"
+                store_address:
+                  $ref: "./components/schemas.yaml#/components/schemas/Address"
+                seller_name:
+                  $ref: "./components/schemas.yaml#/components/schemas/FullName"
+                email:
+                  $ref: "./components/schemas.yaml#/components/schemas/Email"
+                password:
+                  $ref: "./components/schemas.yaml#/components/schemas/Password"
+                password_repeat:
+                  $ref: "./components/schemas.yaml#/components/schemas/Password"
+              required:
+                - "store_name"
+                - "store_address"
+                - "seller_name"
+                - "email"
+                - "password"
+                - "password_repeat"
+        required: true
+      responses:
+        201:
+          description: Register success
+          content:
+            application/json:
+              schema:
+                $ref: "./components/schemas.yaml#/components/schemas/Response"
+              example:
+                status: true
+                code: 201
+                message: register success
+                data: null
+        400:
+          $ref: "./components/responses.yaml#/components/responses/400"
+        404:
+          $ref: "./components/responses.yaml#/components/responses/404"
+        500:
+          $ref: "./components/responses.yaml#/components/responses/500"
+
+  /orders/recent:
+    get:
+      tags:
+        - "Order"
+      description: get recent 3 orders
+      parameters:
+        - $ref: "./components/parameters.yaml#/components/parameters/PerPage"
+      responses:
+        200:
+          description: Success get recent orders
+          content:
+            application/json:
+              schema:
+                $ref: "./components/schemas.yaml#/components/schemas/Response"
+              example:
+                status: true
+                code: 200
+                message: success get recent orders
+                data:
+                  orders:
+                    - buyer: Tude Maha
+                      status: 1
+                    - buyer: Daffa
+                      status: 2
+        400:
+          $ref: "./components/responses.yaml#/components/responses/400"
+        401:
+          $ref: "./components/responses.yaml#/components/responses/401"
+        403:
+          $ref: "./components/responses.yaml#/components/responses/403"
+        404:
+          $ref: "./components/responses.yaml#/components/responses/404"
+        500:
+          $ref: "./components/responses.yaml#/components/responses/500"
+
+  /orders:
+    get:
+      tags:
+        - "Order"
+      description: get all orders by status
+      parameters:
+        - $ref: "./components/parameters.yaml#/components/parameters/OrderStatus"
+      responses:
+        200:
+          description: Success get orders
+          content:
+            application/json:
+              schema:
+                $ref: "./components/schemas.yaml#/components/schemas/Response"
+              example:
+                status: true
+                code: 200
+                message: success get recent orders
+                data:
+                  orders:
+                    - id: 1
+                      buyer: Tude Maha
+                      total: 40000
+                      status: 1
+                      foods:
+                        - name: Donut Kentang Coklat
+                          quantity: 4
+                          price: 20000
+                          image: https://mammates/images/ihfsdfkdsf
+                        - name: Donut Ubi Mawar
+                          quantity: 2
+                          price: 20000
+                          image: https://mammates/images/ihfsdfkdsf
+        400:
+          $ref: "./components/responses.yaml#/components/responses/400"
+        401:
+          $ref: "./components/responses.yaml#/components/responses/401"
+        403:
+          $ref: "./components/responses.yaml#/components/responses/403"
+        404:
+          $ref: "./components/responses.yaml#/components/responses/404"
+        500:
+          $ref: "./components/responses.yaml#/components/responses/500"
+
+  /orders/{order_id}:
+    get:
+      tags:
+        - "Order"
+      description: Get order detail by order_id
+      parameters:
+        - $ref: "./components/parameters.yaml#/components/parameters/OrderId"
+      responses:
+        200:
+          description: Success get orders
+          content:
+            application/json:
+              schema:
+                $ref: "./components/schemas.yaml#/components/schemas/Response"
+              example:
+                status: true
+                code: 200
+                message: success get recent orders
+                data:
+                  order:
+                    invoice: MM/INV/123456
+                    buyer: Tude Maha
+                    time: 2023-12-05 19:45:00
+                    total: 40000
+                    status: 3
+                    foods:
+                        - name: Donut Kentang Coklat
+                          quantity: 4
+                          price: 20000
+                          image: https://mammates/images/ihfsdfkdsf
+                        - name: Donut Ubi Mawar
+                          quantity: 2
+                          price: 20000
+                          image: https://mammates/images/ihfsdfkdsf
+        400:
+          $ref: "./components/responses.yaml#/components/responses/400"
+        401:
+          $ref: "./components/responses.yaml#/components/responses/401"
+        403:
+          $ref: "./components/responses.yaml#/components/responses/403"
+        404:
+          $ref: "./components/responses.yaml#/components/responses/404"
+        500:
+          $ref: "./components/responses.yaml#/components/responses/500"
+    
+    put:
+      tags:
+        - "Order"
+      description: change order status by order_id
+      parameters:
+        - $ref: "./components/parameters.yaml#/components/parameters/OrderId"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                status:
+                  description: new status to assign
+                  type: integer
+                  minimum: 2
+                  maximum: 3
+                  example: 2
+              required:
+                - "status"
+        required: true
+      responses:
+        200:
+          description: Success change order's status
+          content:
+            application/json:
+              schema:
+                $ref: "./components/schemas.yaml#/components/schemas/Response"
+              example:
+                status: true
+                code: 200
+                message: order's status changed sucessfully
+                data: null
+        400:
+          $ref: "./components/responses.yaml#/components/responses/400"
+        401:
+          $ref: "./components/responses.yaml#/components/responses/401"
+        403:
+          $ref: "./components/responses.yaml#/components/responses/403"
+        404:
+          $ref: "./components/responses.yaml#/components/responses/404"
+        500:
+          $ref: "./components/responses.yaml#/components/responses/500"
+
