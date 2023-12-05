@@ -1,0 +1,45 @@
+MamMates:
+  post:
+    tags:
+      - "MamMates"
+    description: use food images to get MamMates ML features
+    requestBody:
+      content:
+        multipart/form-data:
+          schema:
+            type: object
+            properties:
+              image:
+                description: picture used for MamMates ML feature
+                type: string
+                format: binary
+                nullable: false
+            required:
+              - "image"
+      required: true
+    responses:
+      200:
+        description: Success generate MamMates ML
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas.yaml#/components/schemas/Response"
+            example:
+              status: true
+              code: 200
+              message: success generate MamRates ML
+              data:
+                mam_mates:
+                  name: Klepon
+                  price: 4000
+                  rating: 3
+      400:
+        $ref: "../components/responses.yaml#/components/responses/400"
+      401:
+        $ref: "../components/responses.yaml#/components/responses/401"
+      403:
+        $ref: "../components/responses.yaml#/components/responses/403"
+      404:
+        $ref: "../components/responses.yaml#/components/responses/404"
+      500:
+        $ref: "../components/responses.yaml#/components/responses/500"

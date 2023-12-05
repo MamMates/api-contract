@@ -1,0 +1,47 @@
+openapi: 3.0.3
+info:
+  title: MamMates API Contract
+  version: 0.0.1
+  description: API contract for MamMates backend development
+servers:
+  - url: mammates.com
+    description: Development server
+paths:
+  # auth endpoints
+  /auth/login:
+    $ref: "./paths/auth.yaml#/Login"
+  /auth/register/seller:
+    $ref: "./paths/auth.yaml#/SellerRegister"
+
+  # order endpoints
+  /orders/recent:
+    $ref: "./paths/order.yaml#/RecentOrder"
+  /orders:
+    $ref: "./paths/order.yaml#/Orders"
+  /orders/{id}:
+    $ref: "./paths/order.yaml#/SingleOrder"
+
+  # food endpoints
+  /foods:
+    $ref: "./paths/food.yaml#/Foods"
+  /foods/{id}:
+    $ref: "./paths/food.yaml#/SingleFood"
+  
+  # store account endpoints
+  /accounts/store:
+    $ref: "./paths/store.yaml#/StoreDetail"
+  /accounts/seller:
+    $ref: "./paths/store.yaml#/SellerAccount"
+    
+  # reset password endpoint
+  /password:
+    $ref: "./paths/reset_password.yaml#/ResetPassword"
+  
+  # MamMates endpoint
+  /mam_mates:
+    $ref: "./paths/mam_mates.yaml#/MamMates"
+    
+  # report endpoint
+  /reports:
+    $ref: "./paths/report.yaml#/Report"
+    
