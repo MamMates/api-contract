@@ -7,7 +7,7 @@ servers:
   - url: mammates.com
     description: Development server
 paths:
-  /auth/seller/login:
+  /auth/login:
     post:
       tags:
         - "Seller Auth"
@@ -45,7 +45,7 @@ paths:
         500:
           $ref: "./components/responses.yaml#/components/responses/500"
 
-  /auth/seller/register:
+  /auth/register/seller:
     post:
       tags:
         - "Seller Auth"
@@ -571,6 +571,160 @@ paths:
                 status: true
                 code: 200
                 message: store profile picture updated successfully
+                data: null
+        400:
+          $ref: "./components/responses.yaml#/components/responses/400"
+        401:
+          $ref: "./components/responses.yaml#/components/responses/401"
+        403:
+          $ref: "./components/responses.yaml#/components/responses/403"
+        404:
+          $ref: "./components/responses.yaml#/components/responses/404"
+        500:
+          $ref: "./components/responses.yaml#/components/responses/500"
+  
+  /password:
+    put:
+      tags:
+        - "Password"
+      description: change user's password
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                old_password:
+                  $ref: "./components/schemas.yaml#/components/schemas/Password"
+                new_password:
+                  $ref: "./components/schemas.yaml#/components/schemas/Password"
+                new_password_repeat:
+                  $ref: "./components/schemas.yaml#/components/schemas/Password"
+              required:
+                - "old_password"
+                - "new_password"
+                - "new_password_repeat"
+        required: true
+      responses:
+        200:
+          description: Success change password
+          content:
+            application/json:
+              schema:
+                $ref: "./components/schemas.yaml#/components/schemas/Response"
+              example:
+                status: true
+                code: 200
+                message: passowrd changed successfully
+                data: null
+        400:
+          $ref: "./components/responses.yaml#/components/responses/400"
+        401:
+          $ref: "./components/responses.yaml#/components/responses/401"
+        403:
+          $ref: "./components/responses.yaml#/components/responses/403"
+        404:
+          $ref: "./components/responses.yaml#/components/responses/404"
+        500:
+          $ref: "./components/responses.yaml#/components/responses/500"
+
+  /mam_mates:
+    post:
+      tags:
+        - "MamMates"
+      description: use food images to get MamMates ML features
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                image:
+                  description: picture used for MamMates ML feature
+                  type: string
+                  format: binary
+                  nullable: false
+              required:
+                - "image"
+        required: true
+      responses:
+        200:
+          description: Success generate MamMates ML
+          content:
+            application/json:
+              schema:
+                $ref: "./components/schemas.yaml#/components/schemas/Response"
+              example:
+                status: true
+                code: 200
+                message: success generate MamRates ML
+                data:
+                  mam_mates:
+                    name: Klepon
+                    price: 4000
+                    rating: 3
+        400:
+          $ref: "./components/responses.yaml#/components/responses/400"
+        401:
+          $ref: "./components/responses.yaml#/components/responses/401"
+        403:
+          $ref: "./components/responses.yaml#/components/responses/403"
+        404:
+          $ref: "./components/responses.yaml#/components/responses/404"
+        500:
+          $ref: "./components/responses.yaml#/components/responses/500"
+
+  /reports:
+    post:
+      tags:
+        - "Report"
+      description: report the miss classification by ML
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                name:
+                  description: the right food name
+                  type: string
+                  minLength: 1
+                  nullable: false
+                  example: Donat Ubi Mawar
+                price:
+                  description: the right food price
+                  type: integer
+                  minimum: 1
+                  nullable: false
+                  example: 5000
+                rating:
+                  description: the right rating
+                  type: integer
+                  minimum: 1
+                  nullable: false
+                  example: 3
+                image:
+                  description: picture from the wrong classification
+                  type: string
+                  format: binary
+                  nullable: false
+              required:
+                - "name"
+                - "price"
+                - "rating"
+                - "image"
+        required: true
+      responses:
+        200:
+          description: Success send report
+          content:
+            application/json:
+              schema:
+                $ref: "./components/schemas.yaml#/components/schemas/Response"
+              example:
+                status: true
+                code: 200
+                message: success send report
                 data: null
         400:
           $ref: "./components/responses.yaml#/components/responses/400"
