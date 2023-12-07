@@ -1,0 +1,58 @@
+Predict:
+  post:
+    tags:
+      - "Predict"
+    description: predict the food category, rating, and price
+    requestBody:
+      content:
+        multipart/form-data:
+          schema:
+            type: object
+            properties:
+              image:
+                description: picture from the seller
+                type: string
+                format: binary
+                nullable: false
+              province:
+                description: the province of seller
+                type: string
+                minLength: 1
+                nullable: false
+                example: Bali
+              environment:
+                description: the environment of seller
+                type: string
+                minLength: 1
+                nullable: true
+                example: school
+            required:
+              - "province"
+              - "image"
+      required: true
+    responses:
+      200:
+        description: Success get predict
+        content:
+          application/json:
+            schema:
+              $ref: "../components/schemas.yaml#/components/schemas/Response"
+            example:
+              status: true
+              code: 200
+              message: success get predict
+              data: {
+                "category": "donut",
+                "rating": 3,
+                "price": 10000
+              }
+      400:
+        $ref: "../components/responses.yaml#/components/responses/400"
+      401:
+        $ref: "../components/responses.yaml#/components/responses/401"
+      403:
+        $ref: "../components/responses.yaml#/components/responses/403"
+      404:
+        $ref: "../components/responses.yaml#/components/responses/404"
+      500:
+        $ref: "../components/responses.yaml#/components/responses/500"
