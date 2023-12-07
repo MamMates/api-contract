@@ -44,4 +44,7 @@ paths:
   # report endpoint
   /reports:
     $ref: "./paths/report.yaml#/Report"
-    
+  
+  # ml seller endpoint
+  /predict:
+    $ref: "./paths/predict.yaml#/Predict"
