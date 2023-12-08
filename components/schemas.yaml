@@ -57,11 +57,17 @@ components:
           format: binary
           nullable: false
         name:
-          description: food name (generated from ML)
+          description: food name
           type: string
           minLength: 1
           nullable: false
           example: Donat Ubi Mawar
+        category:
+          description: food name (generated from ML)
+          type: integer
+          minimum: 1
+          nullable: false
+          example: 1
         price:
           description: food price (filled or generated from ML)
           type: integer
@@ -82,5 +88,6 @@ components:
       required:
         - "name"
         - "price"
+        - "category"
         - "mam_image"
         - "mam_rates"

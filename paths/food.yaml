@@ -92,6 +92,7 @@ SingleFood:
               data: 
                 food:
                   name: Donat Ubi Mawar
+                  category: 1
                   price: 5000
                   mam_rates: 3
                   image: https://mammates/images/ihfsdfkdsf
