@@ -30,7 +30,7 @@ MamMates:
               message: success generate MamRates ML
               data:
                 mam_mates:
-                  name: Klepon
+                  category: 1
                   price: 4000
                   rating: 3
       400:
