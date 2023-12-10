@@ -42,7 +42,7 @@ Predict:
               code: 200
               message: success get predict
               data: {
-                "category": "donut",
+                "category": 3,
                 "rating": 3,
                 "price": 10000
               }
